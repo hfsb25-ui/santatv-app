@@ -146,6 +146,7 @@ public class MainActivity extends Activity {
         root.addView(offline, new FrameLayout.LayoutParams(-1, -1));
 
         criarPlayer();
+        Vigia.iniciar(this);
         web.loadUrl(homeUrl);
         esconderBarras();
     }
@@ -230,6 +231,7 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         web.onResume();
+        Vigia.retomar(this); // voltou para a TV: o vigia volta a funcionar
         if (player != null && currentUrl != null) player.play();
     }
 
@@ -306,6 +308,14 @@ public class MainActivity extends Activity {
         }
 
         @JavascriptInterface
+        public String vigia() {
+            return "{\"uso\":" + Vigia.temAcessoUso(MainActivity.this) + ",\"sobrepor\":" + Vigia.podeSobrepor(MainActivity.this) + "}";
+        }
+
+        @JavascriptInterface
+        public void retomarVigia() { Vigia.retomar(MainActivity.this); }
+
+        @JavascriptInterface
         public void setRect(float x, float y, float w, float h) {
             ui.post(() -> posicionar(x, y, w, h));
         }
@@ -317,6 +327,7 @@ public class MainActivity extends Activity {
         public void openSettings() {
             ui.post(() -> {
                 pararVideo();
+                Vigia.pausar(MainActivity.this, 15 * 60 * 1000L); // 15 min para a equipe mexer no aparelho
                 Intent i = new Intent(Settings.ACTION_SETTINGS);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 try { startActivity(i); } catch (Exception ignored) { }
