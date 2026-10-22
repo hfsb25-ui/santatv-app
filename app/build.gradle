@@ -1,0 +1,40 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'br.com.santabarbara.tv'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'br.com.santabarbara.tv'
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+        // Endereço da tela da TV (pode ser trocado depois pelo script de configuração)
+        buildConfigField 'String', 'HOME_URL', '"http://santatv.comercial.ws/tv/tv/"'
+    }
+
+    signingConfigs {
+        fixo {
+            storeFile file('santatv.keystore')
+            storePassword 'santatv123'
+            keyAlias 'santatv'
+            keyPassword 'santatv123'
+        }
+    }
+    buildTypes {
+        release { signingConfig signingConfigs.fixo; minifyEnabled false }
+        debug { signingConfig signingConfigs.fixo }
+    }
+    buildFeatures { buildConfig true }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.media3:media3-exoplayer:1.4.1'
+    implementation 'androidx.media3:media3-exoplayer-hls:1.4.1'
+    implementation 'androidx.media3:media3-ui:1.4.1'
+}
