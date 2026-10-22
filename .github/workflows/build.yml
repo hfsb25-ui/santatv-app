@@ -1,7 +1,10 @@
 name: Gerar APK
 on:
   push:
+    branches: [main]
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   apk:
     runs-on: ubuntu-latest
@@ -15,3 +18,13 @@ jobs:
       - run: cp app/build/outputs/apk/release/app-release.apk SantaBarbaraTV.apk
       - uses: actions/upload-artifact@v4
         with: { name: SantaBarbaraTV, path: SantaBarbaraTV.apk }
+      # Também publica o APK no ramo "apk" do repositório
+      - name: Publicar no ramo apk
+        run: |
+          mkdir out && cp SantaBarbaraTV.apk out/ && cd out
+          git init -q -b apk
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add SantaBarbaraTV.apk
+          git commit -q -m "APK de ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" apk
