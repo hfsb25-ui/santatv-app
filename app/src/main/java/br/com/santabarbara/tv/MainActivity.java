@@ -75,6 +75,7 @@ public class MainActivity extends Activity {
 
         SharedPreferences prefs = getSharedPreferences("tv", MODE_PRIVATE);
         homeUrl = prefs.getString("url", BuildConfig.HOME_URL);
+        guardarQuarto(getIntent());
 
         root = new FrameLayout(this);
         root.setBackgroundColor(Color.BLACK);
@@ -191,6 +192,14 @@ public class MainActivity extends Activity {
         playerView.setPlayer(player);
     }
 
+    /** O script de instalação manda o número do apartamento: am start ... --es quarto 12 */
+    private boolean guardarQuarto(Intent i) {
+        if (i == null || !i.hasExtra("quarto")) return false;
+        String q = i.getStringExtra("quarto");
+        getSharedPreferences("tv", MODE_PRIVATE).edit().putString("quarto", q == null ? "" : q.trim()).apply();
+        return true;
+    }
+
     private void mostrarSemConexao() {
         pageFailed = true;
         pararVideo();
@@ -251,6 +260,7 @@ public class MainActivity extends Activity {
     protected void onNewIntent(Intent intent) {
         // Apertou Home: volta para o início da TV.
         super.onNewIntent(intent);
+        if (guardarQuarto(intent)) web.reload();
         // Só volta para o início quando foi o botão Home de verdade
         // (tela inicial do Android, ou o vigia trazendo a TV de volta da tela da Amazon).
         boolean home = intent != null && (intent.hasCategory(Intent.CATEGORY_HOME) || intent.getBooleanExtra("inicio", false));
@@ -318,6 +328,14 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public String vigia() {
             return "{\"uso\":" + Vigia.temAcessoUso(MainActivity.this) + ",\"sobrepor\":" + Vigia.podeSobrepor(MainActivity.this) + "}";
+        }
+
+        @JavascriptInterface
+        public String quarto() { return getSharedPreferences("tv", MODE_PRIVATE).getString("quarto", ""); }
+
+        @JavascriptInterface
+        public void setQuarto(String q) {
+            getSharedPreferences("tv", MODE_PRIVATE).edit().putString("quarto", q == null ? "" : q.trim()).apply();
         }
 
         @JavascriptInterface
