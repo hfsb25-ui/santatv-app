@@ -68,7 +68,9 @@ public class Vigia extends Service {
     }
 
     private boolean pausado() {
-        return getSharedPreferences("tv", MODE_PRIVATE).getLong("vigia_pausa", 0) > System.currentTimeMillis();
+        try {
+            return getSharedPreferences("tv", MODE_PRIVATE).getLong("vigia_pausa", 0) > System.currentTimeMillis();
+        } catch (Exception e) { return false; }
     }
 
     @Override
@@ -88,7 +90,7 @@ public class Vigia extends Service {
     private final Runnable tick = new Runnable() {
         @Override public void run() {
             try { verificar(); } catch (Exception ignored) { }
-            h.postDelayed(this, 700);
+            h.postDelayed(this, 500);
         }
     };
 
