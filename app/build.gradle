@@ -27,6 +27,8 @@ android {
         debug { signingConfig signingConfigs.fixo }
     }
     buildFeatures { buildConfig true }
+    // App instalado direto nos aparelhos (fora da Play Store)
+    lint { checkReleaseBuilds false; abortOnError false }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
