@@ -95,6 +95,7 @@ public class Vigia extends Service {
     };
 
     private void verificar() {
+        if (MainActivity.visivel) { ultimoPlano = getPackageName(); return; } // a TV já está na frente
         if (!temAcessoUso(this)) return;
         UsageStatsManager usm = (UsageStatsManager) getSystemService(USAGE_STATS_SERVICE);
         long agora = System.currentTimeMillis();
@@ -107,12 +108,15 @@ public class Vigia extends Service {
         if (ultimoPlano == null || pausado()) return;
         if (TELAS_INICIAIS.contains(ultimoPlano) && agora - ultimaAbertura > 1500) {
             ultimaAbertura = agora;
-            abrirApp(this);
+            ultimoPlano = null;
+            abrirApp(this, true);
         }
     }
 
-    static void abrirApp(Context c) {
+    static void abrirApp(Context c, boolean irParaInicio) {
+        if (MainActivity.visivel) return;
         Intent i = new Intent(c, MainActivity.class);
+        i.putExtra("inicio", irParaInicio);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         try { c.startActivity(i); } catch (Exception ignored) { }
     }

@@ -46,6 +46,9 @@ import org.json.JSONObject;
  */
 public class MainActivity extends Activity {
 
+    /** true enquanto a TV do hotel está na frente: o vigia não faz nada. */
+    static volatile boolean visivel = false;
+
     private static final String UA = "SantaBarbaraTV/1.0 (Android)";
 
     private FrameLayout root;
@@ -230,6 +233,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        visivel = true;
         web.onResume();
         Vigia.retomar(this); // voltou para a TV: o vigia volta a funcionar
         if (player != null && currentUrl != null) player.play();
@@ -238,6 +242,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        visivel = false;
         if (player != null) player.pause();
         web.onPause();
     }
@@ -246,7 +251,10 @@ public class MainActivity extends Activity {
     protected void onNewIntent(Intent intent) {
         // Apertou Home: volta para o início da TV.
         super.onNewIntent(intent);
-        tecla("Home");
+        // Só volta para o início quando foi o botão Home de verdade
+        // (tela inicial do Android, ou o vigia trazendo a TV de volta da tela da Amazon).
+        boolean home = intent != null && (intent.hasCategory(Intent.CATEGORY_HOME) || intent.getBooleanExtra("inicio", false));
+        if (home) tecla("Home");
     }
 
     @Override

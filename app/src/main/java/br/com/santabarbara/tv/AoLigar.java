@@ -21,10 +21,10 @@ public class AoLigar extends BroadcastReceiver {
         ultimo = agora;
         try { Vigia.retomar(c); } catch (Exception ignored) { }  // pode falhar antes do desbloqueio
         Vigia.iniciar(c);
-        Vigia.abrirApp(c);
+        Vigia.abrirApp(c, false);
         // Insiste mais algumas vezes: a tela da Amazon pode abrir por cima logo depois.
         Context app = c.getApplicationContext();
         Handler h = new Handler(Looper.getMainLooper());
-        for (long d : new long[]{3000, 8000}) h.postDelayed(() -> Vigia.abrirApp(app), d);
+        for (long d : new long[]{3000, 8000}) h.postDelayed(() -> Vigia.abrirApp(app, false), d);
     }
 }
