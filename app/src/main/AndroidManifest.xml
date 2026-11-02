@@ -8,6 +8,24 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" xmlns:tools="http://schemas.android.com/tools" tools:ignore="ProtectedPermissions" />
     <uses-feature android:name="android.software.leanback" android:required="false" />
+
+    <!-- Android 11+: apps de streaming que o menu "Apps" pode abrir -->
+    <queries>
+        <package android:name="com.netflix.ninja" />
+        <package android:name="com.netflix.mediaclient" />
+        <package android:name="com.google.android.youtube.tv" />
+        <package android:name="com.amazon.firetv.youtube" />
+        <package android:name="com.google.android.youtube.tvkids" />
+        <package android:name="com.amazon.firetv.youtube.kids" />
+        <package android:name="com.amazon.amazonvideo.livingroom" />
+        <package android:name="com.amazon.avod" />
+        <package android:name="com.globo.globotv" />
+        <package android:name="com.disney.disneyplus" />
+        <package android:name="com.wbd.stream" />
+        <package android:name="com.hbo.hbonow" />
+        <package android:name="tv.pluto.android" />
+        <package android:name="com.spotify.tv.android" />
+    </queries>
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
     <application
@@ -39,6 +57,14 @@
         </activity>
 
         <service android:name=".Vigia" android:exported="false" />
+
+        <receiver android:name=".Admin" android:exported="true"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <meta-data android:name="android.app.device_admin" android:resource="@xml/device_admin" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
 
         <receiver android:name=".AoLigar" android:exported="true" android:directBootAware="true">
             <intent-filter>

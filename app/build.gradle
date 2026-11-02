@@ -8,8 +8,8 @@ android {
         applicationId 'br.com.santabarbara.tv'
         minSdk 21
         targetSdk 30
-        versionCode 6
-        versionName '1.5'
+        versionCode 7
+        versionName '1.6'
         // Endereço da tela da TV (pode ser trocado depois pelo script de configuração)
         buildConfigField 'String', 'HOME_URL', '"http://santatv.comercial.ws/tv/"'
     }

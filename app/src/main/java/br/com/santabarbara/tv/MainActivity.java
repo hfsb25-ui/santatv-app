@@ -76,6 +76,7 @@ public class MainActivity extends Activity {
         SharedPreferences prefs = getSharedPreferences("tv", MODE_PRIVATE);
         homeUrl = prefs.getString("url", BuildConfig.HOME_URL);
         guardarQuarto(getIntent());
+        if (getIntent() != null && getIntent().getBooleanExtra("sair_admin", false)) Apps.deixarDeSerAdministrador(this);
 
         root = new FrameLayout(this);
         root.setBackgroundColor(Color.BLACK);
@@ -260,6 +261,7 @@ public class MainActivity extends Activity {
     protected void onNewIntent(Intent intent) {
         // Apertou Home: volta para o início da TV.
         super.onNewIntent(intent);
+        if (intent != null && intent.getBooleanExtra("sair_admin", false)) Apps.deixarDeSerAdministrador(this);
         if (guardarQuarto(intent)) web.reload();
         // Só volta para o início quando foi o botão Home de verdade
         // (tela inicial do Android, ou o vigia trazendo a TV de volta da tela da Amazon).
@@ -336,6 +338,24 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void setQuarto(String q) {
             getSharedPreferences("tv", MODE_PRIVATE).edit().putString("quarto", q == null ? "" : q.trim()).apply();
+        }
+
+        @JavascriptInterface
+        public String apps() { return Apps.listar(MainActivity.this); }
+
+        @JavascriptInterface
+        public boolean abrirApp(String pkg) {
+            ui.post(MainActivity.this::pararVideo);
+            return Apps.abrir(MainActivity.this, pkg);
+        }
+
+        @JavascriptInterface
+        public boolean podeLimparContas() { return Apps.ehAdministrador(MainActivity.this) && android.os.Build.VERSION.SDK_INT >= 28; }
+
+        /** Desloga Netflix, YouTube etc. (apaga os dados desses apps). Avisa a página com tvAppEvent('contas-limpas'). */
+        @JavascriptInterface
+        public String limparContas() {
+            return Apps.limpar(MainActivity.this, () -> avisarPagina("contas-limpas", ""));
         }
 
         @JavascriptInterface
